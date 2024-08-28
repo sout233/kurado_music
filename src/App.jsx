@@ -5,16 +5,9 @@ import "./App.css";
 import SideMenu from "./components/SideMenu";
 import TopBar from "./components/TopBar";
 import SearchPage from "./pages/SearchPage";
+import BottomPlayerController from "./components/BottomPlayerController";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
-
   return (
     <div className="h-screen flex flex-col justify-between rounded-2xl overscroll-none">
       <div className="h-16 bg-base-200 w-full flex">
@@ -27,7 +20,7 @@ function App() {
         </div>
       </div>
       <div className="h-28 bg-base-200">
-        <p>{greetMsg}</p>
+        <BottomPlayerController/>
       </div>
     </div>
   );

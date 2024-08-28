@@ -13,6 +13,14 @@ const SearchPage = () => {
         setData(JSON.parse(invokeResult).result.songs);
 
         console.log(data);
+
+        let fixedResult = await invoke("fix_cover_url", { searchResponse: invokeResult });
+
+        console.log(fixedResult);
+
+        setData(JSON.parse(fixedResult).result.songs);
+
+        console.log(data);
     }
 
     return (
@@ -64,7 +72,7 @@ const SearchPage = () => {
                                         <div className="avatar">
                                             <div className="mask mask-squircle h-12 w-12">
                                                 <img
-                                                    src="https://img.daisyui.com/images/profile/demo/2@94.webp" />
+                                                    src={song.album.picUrl} />
                                             </div>
                                         </div>
                                         <div className="truncate text-ellipsis max-w-40 hover:text-nowrap">

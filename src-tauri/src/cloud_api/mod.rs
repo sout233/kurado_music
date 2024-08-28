@@ -1,44 +1,12 @@
-use serde::{Deserialize, Serialize};
-use reqwest::blocking::get;
+pub(crate) mod search;
+pub(crate) mod search_fixer;
 
-#[derive(Deserialize, Serialize, Debug)]
-struct Song {
-    id: i64,
-    name: String,
-    artists: Vec<Artist>,
-    album: Album,
-}
 
-#[derive(Deserialize, Serialize, Debug)]
-struct Artist {
-    name: String,
-}
+#[allow(dead_code)]
+fn main() {
+    let mut result = search::search_by_keywords("周杰伦").unwrap();
+    println!("{:#?}", result);
 
-#[derive(Deserialize, Serialize, Debug)]
-struct Album {
-    #[serde(rename = "picUrl")]
-    cover_url: Option<String>,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-struct ResultData {
-    songs: Vec<Song>,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct ApiResponse {
-    result: ResultData,
-}
-
-impl Default for ApiResponse {
-    fn default() -> Self {
-        Self { result: ResultData { songs: vec![] }}
-    }
-}
-
-pub(crate) fn search_by_keywords(keywords: &str) -> Result<ApiResponse, Box<dyn std::error::Error>> {
-    let url = format!("https://re-wyy-api.sout.eu.org/search?keywords={}", keywords);
-    let response = get(&url)?;
-    let result: ApiResponse = response.json()?;
-    Ok(result)
+    search_fixer::fix_cover_url(&mut result).unwrap();
+    println!("{:#?}", result);
 }

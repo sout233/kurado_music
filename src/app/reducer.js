@@ -1,6 +1,6 @@
 // store/reducer.js
 export const initialState = {
-    sharedState: 'initial value'
+    sharedState: null
   };
   
   export const rootReducer = (state = initialState, action) => {

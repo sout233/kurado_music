@@ -37,7 +37,7 @@ const SearchPage = () => {
             <div className="flex flex-row justify-between items-center gap-4">
                 <h1 className="text-2xl font-bold justify-start">Search Page</h1>
                 <form onSubmit={handleSubmit}>
-                    <label className="input input-bordered flex items-center justify-end">
+                    <label className="input bg-base-200 rounded-3xl h-10 m-2 flex items-center justify-end">
                         <input ref={searchInputRef} type="text" className="grow" placeholder="Search" />
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +59,7 @@ const SearchPage = () => {
                         <tr>
                             <th>
                                 <label>
-                                    <input onEn type="checkbox" className="checkbox" />
+                                    <input type="checkbox" className="checkbox" />
                                 </label>
                             </th>
                             <th>歌曲</th>

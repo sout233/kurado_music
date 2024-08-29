@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.range-ss {
+    height: 0.25rem /* 16px */;
+}
+.range-ss::-webkit-slider-runnable-track {
+    height: 0.25rem /* 4px */;
+}
+.range-ss::-moz-range-track {
+    height: 0.25rem /* 4px */;
+}
+.range-ss::-webkit-slider-thumb {
+    height: 0rem /* 16px */;
+    width: 0rem /* 16px */;
+    --filler-offset: 0.4rem /* 6.4px */;
+}
+.range-ss::-moz-range-thumb {
+    height: 1rem /* 16px */;
+    width: 1rem /* 16px */;
+    --filler-offset: 0.4rem /* 6.4px */;
+}

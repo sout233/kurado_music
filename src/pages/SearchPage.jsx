@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { useSelector, useDispatch } from 'react-redux';
 
 const SearchPage = () => {
     const [data, setData] = useState();
@@ -22,6 +23,14 @@ const SearchPage = () => {
 
         console.log(data);
     }
+
+    const sharedState = useSelector(state => state.sharedState);
+    const dispatch = useDispatch();
+  
+    const updateState = (value) => {
+      dispatch({ type: 'UPDATE_STATE', payload: value });
+    };
+  
 
     return (
         <div className="flex flex-col space-y-2 max-h-full overflow-hidden">
@@ -95,7 +104,7 @@ const SearchPage = () => {
                                 </td>
                                 <td>{song.id}</td>
                                 <th>
-                                    <button className="btn btn-ghost btn-xs">PLAY</button>
+                                    <button className="btn btn-ghost btn-xs" onClick={() => updateState(song)}>PLAY</button>
                                 </th>
                             </tr>
                         ))}

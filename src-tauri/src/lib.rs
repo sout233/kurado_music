@@ -1,8 +1,13 @@
-use std::{io::{BufReader, Cursor}, sync::Mutex, thread::sleep, time::Duration};
+use std::{
+    io::{BufReader, Cursor},
+    thread::sleep,
+    time::Duration,
+};
 
 use cloud_api::{search::SearchApiResponse, search_fixer};
 use once_cell::sync::Lazy;
 use rodio::{Decoder, OutputStream, Sink};
+use tokio::sync::Mutex;
 
 mod cloud_api;
 
@@ -24,34 +29,37 @@ fn fix_cover_url(search_response: String) -> Result<String, String> {
         .map_err(|e| format!("Failed to serialize JSON: {}", e))
 }
 
+static SINK: Lazy<Mutex<Option<Sink>>> = Lazy::new(|| {
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+    let sink = Sink::try_new(&stream_handle).unwrap();
+    Mutex::new(Some(sink))
+});
+
 #[tauri::command]
 async fn play_audio(url: String) -> Result<(), String> {
-    let _ = tokio::task::spawn_blocking(move || {
+    let response = reqwest::get(&url).await.unwrap();
+    let mut lock = SINK.lock().await;
+    let sink = lock.get_or_insert_with(||{
         let (_stream, stream_handle) = OutputStream::try_default().unwrap();
         let sink = Sink::try_new(&stream_handle).unwrap();
+        sink
+    });
+    if response.status().is_success() {
+        let bytes = response.bytes().await.unwrap();
+        let cursor = Cursor::new(bytes);
+        let source = rodio::Decoder::new(BufReader::new(cursor)).unwrap();
 
-        let response = reqwest::blocking::get(&url).unwrap();
+        sink.append(source);
 
-        if response.status().is_success() {
-            let bytes = response.bytes().unwrap();
-            let cursor = Cursor::new(bytes);
-            let source = rodio::Decoder::new(BufReader::new(cursor)).unwrap();
-
-            sink.append(source);
-
-            while !sink.empty() {
-                std::thread::sleep(Duration::from_millis(100));
-            }
-        } else {
-            eprintln!("Failed to fetch the MP3 file: {}", response.status());
+        while !sink.empty() {
+            std::thread::sleep(Duration::from_millis(100));
         }
-    })
-    .await
-    .map_err(|e| e.to_string());
+    } else {
+        eprintln!("Failed to fetch the MP3 file: {}", response.status());
+    }
 
     Ok(())
 }
-
 
 #[tauri::command]
 fn greet(name: &str) -> String {

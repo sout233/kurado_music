@@ -26,11 +26,12 @@ const SearchPage = () => {
 
     const sharedState = useSelector(state => state.sharedState);
     const dispatch = useDispatch();
-  
-    const updateState = (value) => {
-      dispatch({ type: 'UPDATE_STATE', payload: value });
+
+    const togglePlayBtn = async (value) => {
+        dispatch({ type: 'UPDATE_STATE', payload: value });
+        await invoke("play_audio", { url: "" });
     };
-  
+
 
     return (
         <div className="flex flex-col space-y-2 max-h-full overflow-hidden">
@@ -104,7 +105,7 @@ const SearchPage = () => {
                                 </td>
                                 <td>{song.id}</td>
                                 <th>
-                                    <button className="btn btn-ghost btn-xs" onClick={() => updateState(song)}>PLAY</button>
+                                    <button className="btn btn-ghost btn-xs" onClick={() => togglePlayBtn(song)}>PLAY</button>
                                 </th>
                             </tr>
                         ))}

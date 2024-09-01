@@ -1,4 +1,3 @@
-use reqwest::blocking::get;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -38,14 +37,14 @@ impl Default for SearchApiResponse {
     }
 }
 
-pub(crate) fn search_by_keywords(
+pub(crate) async fn search_by_keywords(
     keywords: &str,
 ) -> Result<SearchApiResponse, Box<dyn std::error::Error>> {
     let url = format!(
         "https://re-wyy-api.sout.eu.org/search?keywords={}",
         keywords
     );
-    let response = get(&url)?;
-    let result: SearchApiResponse = response.json()?;
+    let response = reqwest::get(&url).await?;
+    let result: SearchApiResponse = response.json().await?;
     Ok(result)
 }

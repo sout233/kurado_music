@@ -29,7 +29,10 @@ const SearchPage = () => {
 
     const togglePlayBtn = async (value) => {
         dispatch({ type: 'UPDATE_STATE', payload: value });
-        await invoke("play_audio", { url: "" });
+        let url = `https://music.163.com/song/media/outer/url?id=${value.id}.mp3`;
+        console.log(value);
+        console.log(url);
+        await invoke("play_url", { url: url });
     };
 
 

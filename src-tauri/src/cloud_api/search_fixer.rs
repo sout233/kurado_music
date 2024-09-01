@@ -1,4 +1,3 @@
-use reqwest::blocking::get;
 use serde::{Deserialize, Serialize};
 
 use crate::cloud_api::search::SearchApiResponse;
@@ -30,7 +29,7 @@ struct SongDetailResponse {
     songs: Vec<Song>,
 }
 
-pub(crate) fn fix_cover_url(
+pub(crate) async fn fix_cover_url(
     predata: &mut SearchApiResponse,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let ids = predata
@@ -45,8 +44,8 @@ pub(crate) fn fix_cover_url(
     println!("ids: {:#?}", ids);
     let url = format!("https://re-wyy-api.sout.eu.org/song/detail?ids={}", ids);
 
-    let response = get(&url)?;
-    let result: SongDetailResponse = response.json()?;
+    let response = reqwest::get(&url).await?;
+    let result: SongDetailResponse = response.json().await?;
 
     for song in result.songs {
         predata

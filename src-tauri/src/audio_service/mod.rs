@@ -16,7 +16,7 @@ use tokio::{
 
 pub struct AudioService {
     pub event_sender: Sender<AudioEvent>,
-    _stream: OutputStream, // sink need the stream, ensuring that their lifecycles are the same
+    _stream: OutputStream,
     pub sink: Arc<Mutex<Sink>>,
 }
 
@@ -38,6 +38,11 @@ impl AudioService {
                 let sink = sink_clone.lock().await;
                 match event {
                     AudioEvent::PlayUrl(url) => {
+                        println!("Playing URL: {}", url);
+
+                        sink.stop();
+                        sink.clear();
+
                         let response = reqwest::get(url).await.unwrap();
 
                         if response.status().is_success() {
@@ -48,7 +53,6 @@ impl AudioService {
                             let cursor = Cursor::new(bytes);
                             let source = rodio::Decoder::new(BufReader::new(cursor)).unwrap();
 
-                            sink.clear();
                             if sink.is_paused() {
                                 sink.append(source);
                                 sink.play();
